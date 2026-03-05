@@ -71,7 +71,7 @@ class Product(BaseModel):
     quantidade: str | None = Field(default=None, description="Quantity in pack")
 
     # Pricing
-    preco_regular: float = Field(..., ge=0, description="Regular price")
+    preco_regular: float = Field(default=0.0, ge=0, description="Regular price")
     preco_promocional: float | None = Field(default=None, ge=0, description="Promotional price")
     economia: float | None = Field(default=None, ge=0, description="Savings amount")
 
@@ -95,22 +95,37 @@ class Product(BaseModel):
         """Ensure codigo is stripped and padded if needed."""
         return v.strip().zfill(5) if v.strip().isdigit() else v.strip()
 
-    @field_validator("preco_regular", "preco_promocional", mode="before")
+    @field_validator("preco_regular", mode="before")
     @classmethod
-    def parse_price(cls, v: Any) -> float | None:
-        """Parse price from various formats."""
+    def parse_regular_price(cls, v: Any) -> float:
+        """Parse regular price, defaulting to 0.0 if None."""
         if v is None:
-            return None
+            return 0.0
         if isinstance(v, (int, float)):
             return float(v)
         if isinstance(v, str):
-            # Handle Brazilian format: "R$ 55,90" or "55.90"
             cleaned = v.replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".")
             try:
                 return float(cleaned)
             except ValueError:
                 return 0.0
         return 0.0
+
+    @field_validator("preco_promocional", mode="before")
+    @classmethod
+    def parse_promotional_price(cls, v: Any) -> float | None:
+        """Parse promotional price from various formats."""
+        if v is None:
+            return None
+        if isinstance(v, (int, float)):
+            return float(v)
+        if isinstance(v, str):
+            cleaned = v.replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".")
+            try:
+                return float(cleaned)
+            except ValueError:
+                return None
+        return None
 
     @property
     def desconto_percentual(self) -> float | None:
