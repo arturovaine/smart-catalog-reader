@@ -249,9 +249,9 @@ class GeminiClient(LLMClient):
         return PromotionalRule(
             type=tipo,
             description=rule.get("descricao"),
-            discount_tiers=rule.get("discount_tiers", {}),
-            combo_codes=rule.get("combo_codes", []),
-            related_pages=rule.get("paginas_relacionadas", []),
+            discount_tiers=rule.get("discount_tiers") or {},
+            combo_codes=rule.get("combo_codes") or [],
+            related_pages=rule.get("paginas_relacionadas") or [],
         )
 
     def extract_products(
