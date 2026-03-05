@@ -73,6 +73,9 @@ DEFAULT_SYNONYMS: dict[str, list[str]] = {
         "Desodorante Corporal",
         "Cuidados Corporais",
         "Hidratação Corporal",
+        "Limpeza",
+        "Tratamento",
+        "Cuidado Pessoal",
     ],
     "Cabelos": [
         "Cabelo",
