@@ -32,68 +32,68 @@ class JSONStorageRepository(StorageRepository):
         """Serialize catalog to JSON-compatible dict."""
         return {
             "metadata": {
-                "nome": catalog.nome,
-                "marca": catalog.marca,
-                "ciclo": catalog.ciclo,
-                "vigencia_inicio": (
+                "name": catalog.nome,
+                "brand": catalog.marca,
+                "cycle": catalog.ciclo,
+                "validity_start": (
                     catalog.vigencia_inicio.isoformat() if catalog.vigencia_inicio else None
                 ),
-                "vigencia_fim": (
+                "validity_end": (
                     catalog.vigencia_fim.isoformat() if catalog.vigencia_fim else None
                 ),
-                "total_paginas": catalog.total_paginas,
+                "total_pages": catalog.total_paginas,
                 "source_file": str(catalog.source_file),
-                "paginas_processadas": catalog.paginas_processadas,
-                "paginas_com_erro": catalog.paginas_com_erro,
+                "pages_processed": catalog.paginas_processadas,
+                "pages_with_errors": catalog.paginas_com_erro,
                 "exported_at": datetime.now().isoformat(),
             },
-            "regras_promocionais_globais": [
+            "global_promotional_rules": [
                 self._serialize_promo_rule(r) for r in catalog.regras_promocionais_globais
             ],
-            "produtos": [self._serialize_product(p) for p in catalog.produtos],
-            "estatisticas": {
-                "total_produtos": len(catalog.produtos),
-                "produtos_com_promocao": sum(1 for p in catalog.produtos if p.promocao_ativa),
-                "categorias": list(set(p.categoria_normalizada or "Outros" for p in catalog.produtos)),
-                "linhas": list(set(p.linha for p in catalog.produtos if p.linha)),
+            "products": [self._serialize_product(p) for p in catalog.produtos],
+            "statistics": {
+                "total_products": len(catalog.produtos),
+                "products_with_promotion": sum(1 for p in catalog.produtos if p.promocao_ativa),
+                "categories": list(set(p.categoria_normalizada or "Other" for p in catalog.produtos)),
+                "product_lines": list(set(p.linha for p in catalog.produtos if p.linha)),
             },
         }
 
     def _serialize_product(self, product: Product) -> dict[str, Any]:
         """Serialize a product to dict."""
         return {
-            "codigo": product.codigo,
-            "nome": product.nome,
-            "linha": product.linha,
-            "categoria": product.categoria,
-            "categoria_normalizada": product.categoria_normalizada,
-            "volume_peso": product.volume_peso,
-            "quantidade": product.quantidade,
-            "preco_regular": product.preco_regular,
-            "preco_promocional": product.preco_promocional,
-            "economia": product.economia,
-            "desconto_percentual": product.desconto_percentual,
-            "promocao_ativa": product.promocao_ativa,
-            "regra_promocional": (
+            "code": product.codigo,
+            "name": product.nome,
+            "product_line": product.linha,
+            "category": product.categoria,
+            "normalized_category": product.categoria_normalizada,
+            "volume_weight": product.volume_peso,
+            "quantity": product.quantidade,
+            "regular_price": product.preco_regular,
+            "promotional_price": product.preco_promocional,
+            "savings": product.economia,
+            "discount_percentage": product.desconto_percentual,
+            "promotion_active": product.promocao_ativa,
+            "promotional_rule": (
                 self._serialize_promo_rule(product.regra_promocional)
                 if product.regra_promocional
                 else None
             ),
-            "caracteristicas": product.caracteristicas,
-            "pagina": product.pagina,
-            "quadrante": product.quadrante,
-            "alertas": [self._serialize_alert(a) for a in product.alertas],
+            "features": product.caracteristicas,
+            "page": product.pagina,
+            "quadrant": product.quadrante,
+            "alerts": [self._serialize_alert(a) for a in product.alertas],
         }
 
     def _serialize_promo_rule(self, rule: PromotionalRule) -> dict[str, Any]:
         """Serialize promotional rule to dict."""
         return {
-            "tipo": rule.type.value,
-            "descricao": rule.description,
+            "type": rule.type.value,
+            "description": rule.description,
             "conditions": rule.conditions,
             "discount_tiers": rule.discount_tiers,
             "combo_codes": rule.combo_codes,
-            "paginas_relacionadas": rule.related_pages,
+            "related_pages": rule.related_pages,
         }
 
     def _serialize_alert(self, alert: ValidationAlert) -> dict[str, Any]:
