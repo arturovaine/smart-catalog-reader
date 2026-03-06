@@ -24,6 +24,67 @@ Extract product data from cosmetics catalogs using AI vision (Gemini).
 - [O Boticário Catalogs](https://brcatalogos.com.br/oboticario/)
 - [Natura Catalogs](https://brcatalogos.com.br/revista-natura/)
 
+### Sample Output
+
+<table>
+<tr>
+<th>O Boticário</th>
+<th>Natura</th>
+</tr>
+<tr>
+<td>
+
+```json
+{
+  "code": "85675",
+  "name": "Creme Relaxante Hidratante Corporal",
+  "product_line": "Cuide-se Bem",
+  "category": "Hidratação",
+  "normalized_category": "Corpo e Banho",
+  "volume_weight": "200 g",
+  "regular_price": 69.9,
+  "promotional_price": 55.9,
+  "savings": 14.0,
+  "discount_percentage": 20.03,
+  "promotion_active": true,
+  "promotional_rule": {
+    "type": "simple_discount",
+    "description": "ECONOMIZE R$ 14,00"
+  },
+  "features": ["Vegano", "Sensação relaxante"],
+  "page": 2
+}
+```
+
+</td>
+<td>
+
+```json
+{
+  "code": "204459",
+  "name": "Desodorante Hidratante Perfumado Luna",
+  "product_line": "Natura Luna Nuit",
+  "category": "Corpo e Banho",
+  "normalized_category": "Corpo e Banho",
+  "volume_weight": "300 ml",
+  "regular_price": 95.9,
+  "promotional_price": 66.9,
+  "savings": 29.0,
+  "discount_percentage": 30.24,
+  "promotion_active": true,
+  "promotional_rule": {
+    "type": "simple_discount",
+    "description": "Economize R$ 29,00"
+  },
+  "features": ["08 pontos"],
+  "page": 9
+}
+```
+
+</td>
+</tr>
+</table>
+
 ## Extraction Pipeline (Detailed Flow)
 
 ```
@@ -134,25 +195,25 @@ Extract product data from cosmetics catalogs using AI vision (Gemini).
 │  │                    5. VALIDATION & AUTO-CORRECTION                        │  │
 │  │                    ───────────────────────────────                        │  │
 │  │                                                                            │  │
-│  │   ┌─────────────────────────────────────────────────────────────────┐     │  │
-│  │   │  VALIDATION RULES:                                               │     │  │
-│  │   │  ├── Code: 4-6 digits, alphanumeric                             │     │  │
-│  │   │  ├── Name: min 3 chars, no suspicious characters                │     │  │
-│  │   │  ├── Price: range 0.01 - 10,000 BRL                             │     │  │
-│  │   │  ├── Discount: max 80%                                          │     │  │
-│  │   │  ├── Promotional consistency: flags match prices                │     │  │
-│  │   │  └── Duplicate detection: unique product codes                  │     │  │
-│  │   └─────────────────────────────────────────────────────────────────┘     │  │
-│  │                                                                            │  │
-│  │   ┌─────────────────────────────────────────────────────────────────┐     │  │
-│  │   │  AUTO-CORRECTIONS:                                               │     │  │
-│  │   │  ├── Swap prices if promotional > regular                       │     │  │
-│  │   │  ├── Calculate savings if missing                               │     │  │
-│  │   │  ├── Set promotion_active flag if promo price exists           │     │  │
-│  │   │  └── Normalize category if missing                              │     │  │
-│  │   └─────────────────────────────────────────────────────────────────┘     │  │
-│  │                                                                            │  │
-│  │   Alerts: ERROR (critical) │ WARNING (review) │ INFO (informational)      │  │
+│  │   ┌─────────────────────────────────────────────────────────────────┐    │  │
+│  │   │  VALIDATION RULES:                                              │    │  │
+│  │   │  ├── Code: 4-6 digits, alphanumeric                            │    │  │
+│  │   │  ├── Name: min 3 chars, no suspicious characters               │    │  │
+│  │   │  ├── Price: range 0.01 - 10,000 BRL                            │    │  │
+│  │   │  ├── Discount: max 80%                                         │    │  │
+│  │   │  ├── Promotional consistency: flags match prices               │    │  │
+│  │   │  └── Duplicate detection: unique product codes                 │    │  │
+│  │   └─────────────────────────────────────────────────────────────────┘    │  │
+│  │                                                                           │  │
+│  │   ┌─────────────────────────────────────────────────────────────────┐    │  │
+│  │   │  AUTO-CORRECTIONS:                                              │    │  │
+│  │   │  ├── Swap prices if promotional > regular                      │    │  │
+│  │   │  ├── Calculate savings if missing                              │    │  │
+│  │   │  ├── Set promotion_active flag if promo price exists          │    │  │
+│  │   │  └── Normalize category if missing                             │    │  │
+│  │   └─────────────────────────────────────────────────────────────────┘    │  │
+│  │                                                                           │  │
+│  │   Alerts: ERROR (critical) │ WARNING (review) │ INFO (informational)     │  │
 │  └───────────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────┬───────────────────────────────────────────┘
                                       │
@@ -181,24 +242,24 @@ Extract product data from cosmetics catalogs using AI vision (Gemini).
 │  │                         7. JSON PERSISTENCE                               │  │
 │  │                         ───────────────────                               │  │
 │  │                                                                            │  │
-│  │   data/output/boticario-c03_20260305_214252.json                          │  │
-│  │   ┌─────────────────────────────────────────────────────────────────┐     │  │
-│  │   │  {                                                               │     │  │
-│  │   │    "metadata": {                                                 │     │  │
-│  │   │      "name": "boticario-c03",                                   │     │  │
-│  │   │      "brand": "O Boticário",                                    │     │  │
-│  │   │      "total_pages": 197,                                        │     │  │
-│  │   │      "pages_processed": 197                                     │     │  │
-│  │   │    },                                                            │     │  │
-│  │   │    "global_promotional_rules": [...],                           │     │  │
-│  │   │    "products": [ 1638 products ],                               │     │  │
-│  │   │    "statistics": {                                               │     │  │
-│  │   │      "total_products": 1638,                                    │     │  │
-│  │   │      "products_with_promotion": 1200,                           │     │  │
-│  │   │      "categories": ["Maquiagem", "Corpo e Banho", ...]          │     │  │
-│  │   │    }                                                             │     │  │
-│  │   │  }                                                               │     │  │
-│  │   └─────────────────────────────────────────────────────────────────┘     │  │
+│  │   data/output/boticario-c03_20260305_214252.json                         │  │
+│  │   ┌─────────────────────────────────────────────────────────────────┐    │  │
+│  │   │  {                                                              │    │  │
+│  │   │    "metadata": {                                                │    │  │
+│  │   │      "name": "boticario-c03",                                  │    │  │
+│  │   │      "brand": "O Boticário",                                   │    │  │
+│  │   │      "total_pages": 197,                                       │    │  │
+│  │   │      "pages_processed": 197                                    │    │  │
+│  │   │    },                                                           │    │  │
+│  │   │    "global_promotional_rules": [...],                          │    │  │
+│  │   │    "products": [ 1638 products ],                              │    │  │
+│  │   │    "statistics": {                                              │    │  │
+│  │   │      "total_products": 1638,                                   │    │  │
+│  │   │      "products_with_promotion": 1200,                          │    │  │
+│  │   │      "categories": ["Maquiagem", "Corpo e Banho", ...]         │    │  │
+│  │   │    }                                                            │    │  │
+│  │   │  }                                                              │    │  │
+│  │   └─────────────────────────────────────────────────────────────────┘    │  │
 │  └───────────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -292,32 +353,32 @@ Extract product data from cosmetics catalogs using AI vision (Gemini).
 │   │                       INFRASTRUCTURE LAYER                               │  │
 │   │                    (Concrete Implementations / Adapters)                 │  │
 │   │                                                                           │  │
-│   │   ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐       │  │
-│   │   │ PDF2ImageProcessor│  │   GeminiClient   │  │FuzzyCategoryNorm.│       │  │
-│   │   │ pdf_processor.py │  │   llm_client.py  │  │  normalizer.py   │       │  │
-│   │   │                  │  │                  │  │                  │       │  │
-│   │   │ Implements:      │  │ Implements:      │  │ Implements:      │       │  │
-│   │   │ PDFProcessor     │  │ LLMClient        │  │ CategoryNormalizer│      │  │
-│   │   │                  │  │                  │  │                  │       │  │
-│   │   │ Uses:            │  │ Uses:            │  │ Uses:            │       │  │
-│   │   │ - pdf2image      │  │ - google-genai   │  │ - thefuzz        │       │  │
-│   │   │ - Pillow         │  │ - tenacity       │  │ - rapidfuzz      │       │  │
-│   │   └──────────────────┘  └──────────────────┘  └──────────────────┘       │  │
-│   │                                                                           │  │
-│   │   ┌──────────────────────────────────────────────────────────────┐       │  │
-│   │   │               JSONStorageRepository                          │       │  │
-│   │   │                    storage.py                                │       │  │
-│   │   │                                                              │       │  │
-│   │   │   Implements: StorageRepository                              │       │  │
-│   │   │                                                              │       │  │
-│   │   │   Methods:                                                   │       │  │
-│   │   │   ├── save_catalog()        - Save to JSON                  │       │  │
-│   │   │   ├── load_catalog()        - Load from JSON                │       │  │
-│   │   │   ├── save_checkpoint()     - Save progress                 │       │  │
-│   │   │   ├── load_checkpoint()     - Resume progress               │       │  │
-│   │   │   ├── delete_checkpoint()   - Cleanup                       │       │  │
-│   │   │   └── list_catalogs()       - List PDFs                     │       │  │
-│   │   └──────────────────────────────────────────────────────────────┘       │  │
+│   │   ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐      │  │
+│   │   │PDF2ImageProcessor│  │   GeminiClient   │  │FuzzyCategoryNorm.│      │  │
+│   │   │ pdf_processor.py │  │   llm_client.py  │  │  normalizer.py   │      │  │
+│   │   │                  │  │                  │  │                  │      │  │
+│   │   │ Implements:      │  │ Implements:      │  │ Implements:      │      │  │
+│   │   │ PDFProcessor     │  │ LLMClient        │  │ CategoryNormalizer      │  │
+│   │   │                  │  │                  │  │                  │      │  │
+│   │   │ Uses:            │  │ Uses:            │  │ Uses:            │      │  │
+│   │   │ - pdf2image      │  │ - google-genai   │  │ - thefuzz        │      │  │
+│   │   │ - Pillow         │  │ - tenacity       │  │ - rapidfuzz      │      │  │
+│   │   └──────────────────┘  └──────────────────┘  └──────────────────┘      │  │
+│   │                                                                          │  │
+│   │   ┌──────────────────────────────────────────────────────────────┐      │  │
+│   │   │               JSONStorageRepository                          │      │  │
+│   │   │                    storage.py                                │      │  │
+│   │   │                                                              │      │  │
+│   │   │   Implements: StorageRepository                              │      │  │
+│   │   │                                                              │      │  │
+│   │   │   Methods:                                                   │      │  │
+│   │   │   ├── save_catalog()        - Save to JSON                  │      │  │
+│   │   │   ├── load_catalog()        - Load from JSON                │      │  │
+│   │   │   ├── save_checkpoint()     - Save progress                 │      │  │
+│   │   │   ├── load_checkpoint()     - Resume progress               │      │  │
+│   │   │   ├── delete_checkpoint()   - Cleanup                       │      │  │
+│   │   │   └── list_catalogs()       - List PDFs                     │      │  │
+│   │   └──────────────────────────────────────────────────────────────┘      │  │
 │   └──────────────────────────────────────────────────────────────────────────┘  │
 │                                                                                  │
 │   ┌──────────────────────────────────────────────────────────────────────────┐  │
