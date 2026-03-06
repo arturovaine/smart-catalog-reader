@@ -124,7 +124,6 @@ def extract(
             if page_list:
                 # Extract specific pages
                 results = service.extract_pages(pdf_path, page_list, catalog_name)
-                catalog = service._storage.load_catalog(output) if output and output.exists() else None
 
                 # Create minimal catalog for results
                 from catalog_extractor.domain.models import Catalog
