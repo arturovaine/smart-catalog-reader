@@ -562,4 +562,6 @@ ruff check src/
 
 ## License
 
-MIT
+This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)](LICENSE).
+
+You are free to share and adapt this work for non-commercial purposes with attribution.
