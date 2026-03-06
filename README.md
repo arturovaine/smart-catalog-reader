@@ -2,6 +2,10 @@
 
 An intelligent PDF catalog extraction system that uses **Google Gemini Vision AI** to automatically extract structured product data from cosmetics catalogs.
 
+<p align="center">
+  <img src="docs/images/project-cover.png" alt="Smart Catalog Reader - AI-powered product extraction" width="50%">
+</p>
+
 ## Overview
 
 This tool processes PDF catalogs from brands like **O Boticário** and **Natura**, converting each page into images and using AI vision to extract:
