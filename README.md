@@ -8,6 +8,18 @@ Extract product data from cosmetics catalogs using AI vision (Gemini).
 |:----------------------:|:-----------------:|
 | ![O Boticário Cover](docs/images/boticario-cover.png) | ![Natura Cover](docs/images/natura-cover.png) |
 
+### Extraction Results
+
+| Metric | O Boticário C03 | Natura C03 | Total |
+|--------|---------------:|------------:|------:|
+| **Pages Processed** | 197 | 164 | 361 |
+| **Products Extracted** | 1,638 | 1,206 | 2,844 |
+| **Maquiagem** | 601 | 393 | 994 |
+| **Corpo e Banho** | 328 | 309 | 637 |
+| **Perfumaria** | 277 | 191 | 468 |
+| **Cabelos** | 174 | 187 | 361 |
+| **Outros** | 258 | 126 | 384 |
+
 **Catalog Sources:**
 - [O Boticário Catalogs](https://brcatalogos.com.br/oboticario/)
 - [Natura Catalogs](https://brcatalogos.com.br/revista-natura/)
