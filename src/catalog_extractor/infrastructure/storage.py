@@ -106,6 +106,31 @@ class JSONStorageRepository(StorageRepository):
             "corrected_value": alert.corrected_value,
         }
 
+    def _deserialize_promo_rule(self, data: dict[str, Any]) -> PromotionalRule:
+        """Deserialize promotional rule from dict."""
+        from catalog_extractor.domain.models import PromotionType
+
+        return PromotionalRule(
+            type=PromotionType(data.get("type", "none")),
+            description=data.get("description"),
+            conditions=data.get("conditions"),
+            discount_tiers=data.get("discount_tiers"),
+            combo_codes=data.get("combo_codes"),
+            related_pages=data.get("related_pages"),
+        )
+
+    def _deserialize_alert(self, data: dict[str, Any]) -> ValidationAlert:
+        """Deserialize validation alert from dict."""
+        from catalog_extractor.domain.models import ValidationAlertLevel
+
+        return ValidationAlert(
+            level=ValidationAlertLevel(data.get("level", "info")),
+            field=data.get("field", ""),
+            message=data.get("message", ""),
+            original_value=data.get("original_value"),
+            corrected_value=data.get("corrected_value"),
+        )
+
     def save_catalog(self, catalog: Catalog, output_path: Path | None = None) -> Path:
         """Save extracted catalog data to JSON.
 
@@ -142,36 +167,55 @@ class JSONStorageRepository(StorageRepository):
 
         metadata = data.get("metadata", {})
 
-        # Reconstruct products
+        # Reconstruct products (using English keys from serialization)
         products = []
-        for p_data in data.get("produtos", []):
+        for p_data in data.get("products", []):
+            # Parse promotional rule if present
+            promo_rule = None
+            if p_data.get("promotional_rule"):
+                promo_rule = self._deserialize_promo_rule(p_data["promotional_rule"])
+
+            # Parse alerts if present
+            alerts = []
+            for a_data in p_data.get("alerts", []):
+                alerts.append(self._deserialize_alert(a_data))
+
             product = Product(
-                codigo=p_data["codigo"],
-                nome=p_data["nome"],
-                linha=p_data.get("linha"),
-                categoria=p_data.get("categoria"),
-                categoria_normalizada=p_data.get("categoria_normalizada"),
-                volume_peso=p_data.get("volume_peso"),
-                quantidade=p_data.get("quantidade"),
-                preco_regular=p_data["preco_regular"],
-                preco_promocional=p_data.get("preco_promocional"),
-                economia=p_data.get("economia"),
-                promocao_ativa=p_data.get("promocao_ativa", False),
-                caracteristicas=p_data.get("caracteristicas", []),
-                pagina=p_data["pagina"],
-                quadrante=p_data.get("quadrante"),
+                codigo=p_data["code"],
+                nome=p_data["name"],
+                linha=p_data.get("product_line"),
+                categoria=p_data.get("category"),
+                categoria_normalizada=p_data.get("normalized_category"),
+                volume_peso=p_data.get("volume_weight"),
+                quantidade=p_data.get("quantity"),
+                preco_regular=p_data["regular_price"],
+                preco_promocional=p_data.get("promotional_price"),
+                economia=p_data.get("savings"),
+                desconto_percentual=p_data.get("discount_percentage"),
+                promocao_ativa=p_data.get("promotion_active", False),
+                regra_promocional=promo_rule,
+                caracteristicas=p_data.get("features", []),
+                pagina=p_data["page"],
+                quadrante=p_data.get("quadrant"),
+                alertas=alerts,
             )
             products.append(product)
 
+        # Parse global promotional rules
+        global_rules = []
+        for rule_data in data.get("global_promotional_rules", []):
+            global_rules.append(self._deserialize_promo_rule(rule_data))
+
         return Catalog(
-            nome=metadata.get("nome", "Unknown"),
-            marca=metadata.get("marca", "Unknown"),
-            ciclo=metadata.get("ciclo"),
-            total_paginas=metadata.get("total_paginas", 0),
+            nome=metadata.get("name", "Unknown"),
+            marca=metadata.get("brand", "Unknown"),
+            ciclo=metadata.get("cycle"),
+            total_paginas=metadata.get("total_pages", 0),
             source_file=Path(metadata.get("source_file", "")),
             produtos=products,
-            paginas_processadas=metadata.get("paginas_processadas", 0),
-            paginas_com_erro=metadata.get("paginas_com_erro", []),
+            regras_promocionais_globais=global_rules,
+            paginas_processadas=metadata.get("pages_processed", 0),
+            paginas_com_erro=metadata.get("pages_with_errors", []),
         )
 
     def save_checkpoint(self, catalog: Catalog, last_processed_page: int) -> Path:
@@ -227,35 +271,55 @@ class JSONStorageRepository(StorageRepository):
             catalog_data = data.get("catalog", {})
             metadata = catalog_data.get("metadata", {})
 
+            # Reconstruct products (using English keys from serialization)
             products = []
-            for p_data in catalog_data.get("produtos", []):
+            for p_data in catalog_data.get("products", []):
+                # Parse promotional rule if present
+                promo_rule = None
+                if p_data.get("promotional_rule"):
+                    promo_rule = self._deserialize_promo_rule(p_data["promotional_rule"])
+
+                # Parse alerts if present
+                alerts = []
+                for a_data in p_data.get("alerts", []):
+                    alerts.append(self._deserialize_alert(a_data))
+
                 product = Product(
-                    codigo=p_data["codigo"],
-                    nome=p_data["nome"],
-                    linha=p_data.get("linha"),
-                    categoria=p_data.get("categoria"),
-                    categoria_normalizada=p_data.get("categoria_normalizada"),
-                    volume_peso=p_data.get("volume_peso"),
-                    quantidade=p_data.get("quantidade"),
-                    preco_regular=p_data["preco_regular"],
-                    preco_promocional=p_data.get("preco_promocional"),
-                    economia=p_data.get("economia"),
-                    promocao_ativa=p_data.get("promocao_ativa", False),
-                    caracteristicas=p_data.get("caracteristicas", []),
-                    pagina=p_data["pagina"],
-                    quadrante=p_data.get("quadrante"),
+                    codigo=p_data["code"],
+                    nome=p_data["name"],
+                    linha=p_data.get("product_line"),
+                    categoria=p_data.get("category"),
+                    categoria_normalizada=p_data.get("normalized_category"),
+                    volume_peso=p_data.get("volume_weight"),
+                    quantidade=p_data.get("quantity"),
+                    preco_regular=p_data["regular_price"],
+                    preco_promocional=p_data.get("promotional_price"),
+                    economia=p_data.get("savings"),
+                    desconto_percentual=p_data.get("discount_percentage"),
+                    promocao_ativa=p_data.get("promotion_active", False),
+                    regra_promocional=promo_rule,
+                    caracteristicas=p_data.get("features", []),
+                    pagina=p_data["page"],
+                    quadrante=p_data.get("quadrant"),
+                    alertas=alerts,
                 )
                 products.append(product)
 
+            # Parse global promotional rules
+            global_rules = []
+            for rule_data in catalog_data.get("global_promotional_rules", []):
+                global_rules.append(self._deserialize_promo_rule(rule_data))
+
             catalog = Catalog(
-                nome=metadata.get("nome", catalog_name),
-                marca=metadata.get("marca", "Unknown"),
-                ciclo=metadata.get("ciclo"),
-                total_paginas=metadata.get("total_paginas", 0),
+                nome=metadata.get("name", catalog_name),
+                marca=metadata.get("brand", "Unknown"),
+                ciclo=metadata.get("cycle"),
+                total_paginas=metadata.get("total_pages", 0),
                 source_file=Path(metadata.get("source_file", "")),
                 produtos=products,
-                paginas_processadas=metadata.get("paginas_processadas", 0),
-                paginas_com_erro=metadata.get("paginas_com_erro", []),
+                regras_promocionais_globais=global_rules,
+                paginas_processadas=metadata.get("pages_processed", 0),
+                paginas_com_erro=metadata.get("pages_with_errors", []),
             )
 
             self._logger.info(
