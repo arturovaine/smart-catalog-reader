@@ -101,27 +101,27 @@ The extracted data is normalized, validated, and exported to structured JSON for
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              INPUT: PDF Catalog                                  │
+│                              INPUT: PDF Catalog                                 │
 │                          (e.g., boticario-c03.pdf)                              │
 └─────────────────────────────────────┬───────────────────────────────────────────┘
                                       │
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │  ┌───────────────────────────────────────────────────────────────────────────┐  │
-│  │                         1. PDF PROCESSING                                  │  │
-│  │                         ──────────────────                                 │  │
+│  │                         1. PDF PROCESSING                                 │  │
+│  │                         ──────────────────                                │  │
 │  │   ┌─────────────┐      ┌─────────────┐      ┌─────────────┐               │  │
 │  │   │   Page 1    │      │   Page 2    │      │   Page N    │               │  │
 │  │   │    PDF      │ ───► │    PDF      │ ───► │    PDF      │               │  │
 │  │   └──────┬──────┘      └──────┬──────┘      └──────┬──────┘               │  │
-│  │          │                    │                    │                       │  │
-│  │          ▼                    ▼                    ▼                       │  │
+│  │          │                    │                    │                      │  │
+│  │          ▼                    ▼                    ▼                      │  │
 │  │   ┌─────────────┐      ┌─────────────┐      ┌─────────────┐               │  │
 │  │   │   Image 1   │      │   Image 2   │      │   Image N   │               │  │
 │  │   │  (PIL/PNG)  │      │  (PIL/PNG)  │      │  (PIL/PNG)  │               │  │
 │  │   │  DPI: 200   │      │  DPI: 200   │      │  DPI: 200   │               │  │
 │  │   └─────────────┘      └─────────────┘      └─────────────┘               │  │
-│  │                                                                            │  │
+│  │                                                                           │  │
 │  │   Library: pdf2image (poppler)                                            │  │
 │  └───────────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────┬───────────────────────────────────────────┘
@@ -131,15 +131,15 @@ The extracted data is normalized, validated, and exported to structured JSON for
 │  ┌───────────────────────────────────────────────────────────────────────────┐  │
 │  │                     2. BATCH PROCESSING (5 pages/batch)                   │  │
 │  │                     ───────────────────────────────────                   │  │
-│  │                                                                            │  │
-│  │   ┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐    │  │
-│  │   │ Batch 1 │   │ Batch 2 │   │ Batch 3 │   │   ...   │   │ Batch N │    │  │
-│  │   │ Pages   │   │ Pages   │   │ Pages   │   │         │   │ Pages   │    │  │
-│  │   │  1-5    │   │  6-10   │   │ 11-15   │   │         │   │196-197  │    │  │
-│  │   └────┬────┘   └────┬────┘   └────┬────┘   └────┬────┘   └────┬────┘    │  │
+│  │                                                                           │  │
+│  │   ┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐     │  │
+│  │   │ Batch 1 │   │ Batch 2 │   │ Batch 3 │   │   ...   │   │ Batch N │     │  │
+│  │   │ Pages   │   │ Pages   │   │ Pages   │   │         │   │ Pages   │     │  │
+│  │   │  1-5    │   │  6-10   │   │ 11-15   │   │         │   │196-197  │     │  │
+│  │   └────┬────┘   └────┬────┘   └────┬────┘   └────┬────┘   └────┬────┘     │  │
 │  │        │             │             │             │             │          │  │
 │  │        └─────────────┴─────────────┴─────────────┴─────────────┘          │  │
-│  │                                    │                                       │  │
+│  │                                    │                                      │  │
 │  │                    ┌───────────────┴───────────────┐                      │  │
 │  │                    │      ThreadPoolExecutor       │                      │  │
 │  │                    │    (max_workers: 2 or 10)     │                      │  │
@@ -152,30 +152,30 @@ The extracted data is normalized, validated, and exported to structured JSON for
 │  ┌───────────────────────────────────────────────────────────────────────────┐  │
 │  │                      3. LLM EXTRACTION (Gemini Vision)                    │  │
 │  │                      ─────────────────────────────────                    │  │
-│  │                                                                            │  │
+│  │                                                                           │  │
 │  │   ┌──────────────────────────────────────────────────────────────────┐    │  │
 │  │   │                     Gemini 2.5 Flash API                         │    │  │
 │  │   │  ┌─────────────────────────────────────────────────────────────┐ │    │  │
-│  │   │  │  PROMPT:                                                     │ │    │  │
+│  │   │  │  PROMPT:                                                    │ │    │  │
 │  │   │  │  - Extract product code, name, line, category               │ │    │  │
 │  │   │  │  - Extract regular_price, promotional_price                 │ │    │  │
 │  │   │  │  - Identify promotion type (simple, progressive, combo)     │ │    │  │
 │  │   │  │  - Extract features (vegan, dermatologist tested, etc.)     │ │    │  │
 │  │   │  │  - Detect page type (products, advertising, index)          │ │    │  │
 │  │   │  └─────────────────────────────────────────────────────────────┘ │    │  │
-│  │   │                              │                                    │    │  │
-│  │   │                              ▼                                    │    │  │
+│  │   │                              │                                   │    │  │
+│  │   │                              ▼                                   │    │  │
 │  │   │  ┌─────────────────────────────────────────────────────────────┐ │    │  │
 │  │   │  │  OUTPUT: JSON with products[]                               │ │    │  │
 │  │   │  │  {                                                          │ │    │  │
 │  │   │  │    "produtos": [...],                                       │ │    │  │
-│  │   │  │    "regras_promocionais_globais": [...],                   │ │    │  │
-│  │   │  │    "tipo_pagina": "products"                               │ │    │  │
+│  │   │  │    "regras_promocionais_globais": [...],                    │ │    │  │
+│  │   │  │    "tipo_pagina": "products"                                │ │    │  │
 │  │   │  │  }                                                          │ │    │  │
 │  │   │  └─────────────────────────────────────────────────────────────┘ │    │  │
 │  │   └──────────────────────────────────────────────────────────────────┘    │  │
-│  │                                                                            │  │
-│  │   Retry Logic: Exponential backoff (tenacity) for rate limits            │  │
+│  │                                                                           │  │
+│  │   Retry Logic: Exponential backoff (tenacity) for rate limits             │  │
 │  └───────────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────┬───────────────────────────────────────────┘
                                       │
@@ -184,19 +184,19 @@ The extracted data is normalized, validated, and exported to structured JSON for
 │  ┌───────────────────────────────────────────────────────────────────────────┐  │
 │  │                      4. CATEGORY NORMALIZATION                            │  │
 │  │                      ─────────────────────────                            │  │
-│  │                                                                            │  │
+│  │                                                                           │  │
 │  │   Raw Category              Fuzzy Match (thefuzz)         Normalized      │  │
 │  │   ─────────────             ────────────────────          ──────────      │  │
-│  │   "Hidratação"        ───►  score: 85  ───────────►  "Corpo e Banho"     │  │
-│  │   "Perfume Feminino"  ───►  score: 90  ───────────►  "Perfumaria"        │  │
-│  │   "Batom"             ───►  score: 88  ───────────►  "Maquiagem"         │  │
-│  │   "Shampoo"           ───►  score: 92  ───────────►  "Cabelos"           │  │
-│  │   "Desconhecido"      ───►  score: 45  ───────────►  "Outros"            │  │
-│  │                                                                            │  │
+│  │   "Hidratação"        ───►  score: 85  ───────────►  "Corpo e Banho"      │  │
+│  │   "Perfume Feminino"  ───►  score: 90  ───────────►  "Perfumaria"         │  │
+│  │   "Batom"             ───►  score: 88  ───────────►  "Maquiagem"          │  │
+│  │   "Shampoo"           ───►  score: 92  ───────────►  "Cabelos"            │  │
+│  │   "Desconhecido"      ───►  score: 45  ───────────►  "Outros"             │  │
+│  │                                                                           │  │
 │  │   Master Categories: Perfumaria, Maquiagem, Corpo e Banho, Cabelos,       │  │
 │  │                      Skincare, Infantil, Masculino, Unhas, Acessórios,    │  │
 │  │                      Kits e Presentes, Proteção Solar, Desodorantes       │  │
-│  │                                                                            │  │
+│  │                                                                           │  │
 │  │   Threshold: 75 (configurable)                                            │  │
 │  └───────────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────┬───────────────────────────────────────────┘
@@ -206,26 +206,26 @@ The extracted data is normalized, validated, and exported to structured JSON for
 │  ┌───────────────────────────────────────────────────────────────────────────┐  │
 │  │                    5. VALIDATION & AUTO-CORRECTION                        │  │
 │  │                    ───────────────────────────────                        │  │
-│  │                                                                            │  │
-│  │   ┌─────────────────────────────────────────────────────────────────┐    │  │
-│  │   │  VALIDATION RULES:                                              │    │  │
-│  │   │  ├── Code: 4-6 digits, alphanumeric                            │    │  │
-│  │   │  ├── Name: min 3 chars, no suspicious characters               │    │  │
-│  │   │  ├── Price: range 0.01 - 10,000 BRL                            │    │  │
-│  │   │  ├── Discount: max 80%                                         │    │  │
-│  │   │  ├── Promotional consistency: flags match prices               │    │  │
-│  │   │  └── Duplicate detection: unique product codes                 │    │  │
-│  │   └─────────────────────────────────────────────────────────────────┘    │  │
 │  │                                                                           │  │
-│  │   ┌─────────────────────────────────────────────────────────────────┐    │  │
-│  │   │  AUTO-CORRECTIONS:                                              │    │  │
-│  │   │  ├── Swap prices if promotional > regular                      │    │  │
-│  │   │  ├── Calculate savings if missing                              │    │  │
-│  │   │  ├── Set promotion_active flag if promo price exists          │    │  │
-│  │   │  └── Normalize category if missing                             │    │  │
-│  │   └─────────────────────────────────────────────────────────────────┘    │  │
+│  │   ┌─────────────────────────────────────────────────────────────────┐     │  │
+│  │   │  VALIDATION RULES:                                              │     │  │
+│  │   │  ├── Code: 4-6 digits, alphanumeric                             │     │  │
+│  │   │  ├── Name: min 3 chars, no suspicious characters                │     │  │
+│  │   │  ├── Price: range 0.01 - 10,000 BRL                             │     │  │
+│  │   │  ├── Discount: max 80%                                          │     │  │
+│  │   │  ├── Promotional consistency: flags match prices                │     │  │
+│  │   │  └── Duplicate detection: unique product codes                  │     │  │
+│  │   └─────────────────────────────────────────────────────────────────┘     │  │
 │  │                                                                           │  │
-│  │   Alerts: ERROR (critical) │ WARNING (review) │ INFO (informational)     │  │
+│  │   ┌─────────────────────────────────────────────────────────────────┐     │  │
+│  │   │  AUTO-CORRECTIONS:                                              │     │  │
+│  │   │  ├── Swap prices if promotional > regular                       │     │  │
+│  │   │  ├── Calculate savings if missing                               │     │  │
+│  │   │  ├── Set promotion_active flag if promo price exists            │     │  │
+│  │   │  └── Normalize category if missing                              │     │  │
+│  │   └─────────────────────────────────────────────────────────────────┘     │  │
+│  │                                                                           │  │
+│  │   Alerts: ERROR (critical) │ WARNING (review) │ INFO (informational)      │  │
 │  └───────────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────┬───────────────────────────────────────────┘
                                       │
@@ -234,15 +234,15 @@ The extracted data is normalized, validated, and exported to structured JSON for
 │  ┌───────────────────────────────────────────────────────────────────────────┐  │
 │  │                       6. CHECKPOINTING (every 10 pages)                   │  │
 │  │                       ─────────────────────────────────                   │  │
-│  │                                                                            │  │
+│  │                                                                           │  │
 │  │   .checkpoints/                                                           │  │
 │  │   └── boticario-c03.checkpoint.json                                       │  │
-│  │       {                                                                    │  │
-│  │         "catalog": { ... },            ◄── Full catalog state            │  │
-│  │         "last_processed_page": 110,    ◄── Resume point                  │  │
-│  │         "checkpoint_time": "..."       ◄── Timestamp                     │  │
-│  │       }                                                                    │  │
-│  │                                                                            │  │
+│  │       {                                                                   │  │
+│  │         "catalog": { ... },            ◄── Full catalog state             │  │
+│  │         "last_processed_page": 110,    ◄── Resume point                   │  │
+│  │         "checkpoint_time": "..."       ◄── Timestamp                      │  │
+│  │       }                                                                   │  │
+│  │                                                                           │  │
 │  │   On interrupt (Ctrl+C): Progress saved, resume with --resume             │  │
 │  │   On completion: Checkpoint deleted automatically                         │  │
 │  └───────────────────────────────────────────────────────────────────────────┘  │
@@ -253,25 +253,25 @@ The extracted data is normalized, validated, and exported to structured JSON for
 │  ┌───────────────────────────────────────────────────────────────────────────┐  │
 │  │                         7. JSON PERSISTENCE                               │  │
 │  │                         ───────────────────                               │  │
-│  │                                                                            │  │
-│  │   data/output/boticario-c03_20260305_214252.json                         │  │
-│  │   ┌─────────────────────────────────────────────────────────────────┐    │  │
-│  │   │  {                                                              │    │  │
-│  │   │    "metadata": {                                                │    │  │
-│  │   │      "name": "boticario-c03",                                  │    │  │
-│  │   │      "brand": "O Boticário",                                   │    │  │
-│  │   │      "total_pages": 197,                                       │    │  │
-│  │   │      "pages_processed": 197                                    │    │  │
-│  │   │    },                                                           │    │  │
-│  │   │    "global_promotional_rules": [...],                          │    │  │
-│  │   │    "products": [ 1638 products ],                              │    │  │
-│  │   │    "statistics": {                                              │    │  │
-│  │   │      "total_products": 1638,                                   │    │  │
-│  │   │      "products_with_promotion": 1200,                          │    │  │
-│  │   │      "categories": ["Maquiagem", "Corpo e Banho", ...]         │    │  │
-│  │   │    }                                                            │    │  │
-│  │   │  }                                                              │    │  │
-│  │   └─────────────────────────────────────────────────────────────────┘    │  │
+│  │                                                                           │  │
+│  │   data/output/boticario-c03_20260305_214252.json                          │  │
+│  │   ┌─────────────────────────────────────────────────────────────────┐     │  │
+│  │   │  {                                                              │     │  │
+│  │   │    "metadata": {                                                │     │  │
+│  │   │      "name": "boticario-c03",                                   │     │  │
+│  │   │      "brand": "O Boticário",                                    │     │  │
+│  │   │      "total_pages": 197,                                        │     │  │
+│  │   │      "pages_processed": 197                                     │     │  │
+│  │   │    },                                                           │     │  │
+│  │   │    "global_promotional_rules": [...],                           │     │  │
+│  │   │    "products": [ 1638 products ],                               │     │  │
+│  │   │    "statistics": {                                              │     │  │
+│  │   │      "total_products": 1638,                                    │     │  │
+│  │   │      "products_with_promotion": 1200,                           │     │  │
+│  │   │      "categories": ["Maquiagem", "Corpo e Banho", ...]          │     │  │
+│  │   │    }                                                            │     │  │
+│  │   │  }                                                              │     │  │
+│  │   └─────────────────────────────────────────────────────────────────┘     │  │
 │  └───────────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -280,48 +280,48 @@ The extracted data is normalized, validated, and exported to structured JSON for
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                                                                                  │
+│                                                                                 │
 │   ┌──────────────────────────────────────────────────────────────────────────┐  │
-│   │                           PRESENTATION LAYER                              │  │
-│   │                                                                           │  │
+│   │                           PRESENTATION LAYER                             │  │
+│   │                                                                          │  │
 │   │   ┌─────────────────────────────────────────────────────────────────┐    │  │
-│   │   │                      CLI (Typer + Rich)                          │    │  │
-│   │   │                       main.py                                    │    │  │
-│   │   │  ┌──────────┐  ┌──────────┐  ┌───────────┐  ┌──────────┐       │    │  │
-│   │   │  │ extract  │  │ validate │  │   list    │  │   info   │       │    │  │
-│   │   │  │ command  │  │ command  │  │  command  │  │ command  │       │    │  │
-│   │   │  └──────────┘  └──────────┘  └───────────┘  └──────────┘       │    │  │
+│   │   │                      CLI (Typer + Rich)                         │    │  │
+│   │   │                       main.py                                   │    │  │
+│   │   │  ┌──────────┐  ┌──────────┐  ┌───────────┐  ┌──────────┐        │    │  │
+│   │   │  │ extract  │  │ validate │  │   list    │  │   info   │        │    │  │
+│   │   │  │ command  │  │ command  │  │  command  │  │ command  │        │    │  │
+│   │   │  └──────────┘  └──────────┘  └───────────┘  └──────────┘        │    │  │
 │   │   │                      │                                          │    │  │
 │   │   │                      ▼                                          │    │  │
 │   │   │            Progress Bar │ Tables │ Console Output               │    │  │
 │   │   └─────────────────────────────────────────────────────────────────┘    │  │
 │   └──────────────────────────────────────────────────────────────────────────┘  │
-│                                       │                                          │
-│                                       ▼                                          │
+│                                       │                                         │
+│                                       ▼                                         │
 │   ┌──────────────────────────────────────────────────────────────────────────┐  │
 │   │                      DEPENDENCY INJECTION LAYER                          │  │
-│   │                                                                           │  │
+│   │                                                                          │  │
 │   │   ┌─────────────────────────────────────────────────────────────────┐    │  │
-│   │   │            DI Container (dependency-injector)                    │    │  │
-│   │   │                      container.py                                │    │  │
-│   │   │                                                                  │    │  │
+│   │   │            DI Container (dependency-injector)                   │    │  │
+│   │   │                      container.py                               │    │  │
+│   │   │                                                                 │    │  │
 │   │   │   Settings ─────┬──────────────────────────────────────────┐    │    │  │
 │   │   │                 │                                          │    │    │  │
 │   │   │   Providers:    │                                          │    │    │  │
-│   │   │   ├── pdf_processor ──► Singleton                         │    │    │  │
-│   │   │   ├── llm_client ─────► Singleton                         │    │    │  │
-│   │   │   ├── normalizer ─────► Singleton                         │    │    │  │
-│   │   │   ├── validator ──────► Singleton                         │    │    │  │
-│   │   │   ├── storage ────────► Singleton                         │    │    │  │
-│   │   │   └── extraction_service ► Factory                        │    │    │  │
+│   │   │   ├── pdf_processor ──► Singleton                          │    │    │  │
+│   │   │   ├── llm_client ─────► Singleton                          │    │    │  │
+│   │   │   ├── normalizer ─────► Singleton                          │    │    │  │
+│   │   │   ├── validator ──────► Singleton                          │    │    │  │
+│   │   │   ├── storage ────────► Singleton                          │    │    │  │
+│   │   │   └── extraction_service ► Factory                         │    │    │  │
 │   │   └─────────────────────────────────────────────────────────────────┘    │  │
 │   └──────────────────────────────────────────────────────────────────────────┘  │
-│                                       │                                          │
-│                                       ▼                                          │
+│                                       │                                         │
+│                                       ▼                                         │
 │   ┌──────────────────────────────────────────────────────────────────────────┐  │
 │   │                         APPLICATION LAYER                                │  │
 │   │                        (Use Cases / Services)                            │  │
-│   │                                                                           │  │
+│   │                                                                          │  │
 │   │   ┌─────────────────────────────────┐  ┌────────────────────────────┐    │  │
 │   │   │   CatalogExtractionService      │  │  ProductValidatorService   │    │  │
 │   │   │   extraction_service.py         │  │  validator.py              │    │  │
@@ -333,16 +333,16 @@ The extracted data is normalized, validated, and exported to structured JSON for
 │   │   │   ├── save_results()            │  │  └── get_validation_summary│    │  │
 │   │   │   └── get_validation_report()   │  │                            │    │  │
 │   │   └────────────────┬────────────────┘  └────────────────────────────┘    │  │
-│   │                    │                                                      │  │
-│   │      Orchestrates: │                                                      │  │
+│   │                    │                                                     │  │
+│   │      Orchestrates: │                                                     │  │
 │   │      PDF ──► LLM ──► Normalize ──► Validate ──► Store                    │  │
 │   └──────────────────────────────────────────────────────────────────────────┘  │
-│                                       │                                          │
-│                                       ▼                                          │
+│                                       │                                         │
+│                                       ▼                                         │
 │   ┌──────────────────────────────────────────────────────────────────────────┐  │
 │   │                           DOMAIN LAYER                                   │  │
 │   │                     (Entities / Interfaces / Ports)                      │  │
-│   │                                                                           │  │
+│   │                                                                          │  │
 │   │   ┌─────────────────────────────────┐  ┌────────────────────────────┐    │  │
 │   │   │        models.py                │  │      interfaces.py         │    │  │
 │   │   │                                 │  │      (Ports/Contracts)     │    │  │
@@ -359,49 +359,49 @@ The extracted data is normalized, validated, and exported to structured JSON for
 │   │   │   └── ValidationAlertLevel      │  │   must implement           │    │  │
 │   │   └─────────────────────────────────┘  └────────────────────────────┘    │  │
 │   └──────────────────────────────────────────────────────────────────────────┘  │
-│                                       │                                          │
-│                                       ▼                                          │
+│                                       │                                         │
+│                                       ▼                                         │
 │   ┌──────────────────────────────────────────────────────────────────────────┐  │
 │   │                       INFRASTRUCTURE LAYER                               │  │
 │   │                    (Concrete Implementations / Adapters)                 │  │
-│   │                                                                           │  │
-│   │   ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐      │  │
-│   │   │PDF2ImageProcessor│  │   GeminiClient   │  │FuzzyCategoryNorm.│      │  │
-│   │   │ pdf_processor.py │  │   llm_client.py  │  │  normalizer.py   │      │  │
-│   │   │                  │  │                  │  │                  │      │  │
-│   │   │ Implements:      │  │ Implements:      │  │ Implements:      │      │  │
-│   │   │ PDFProcessor     │  │ LLMClient        │  │ CategoryNormalizer      │  │
-│   │   │                  │  │                  │  │                  │      │  │
-│   │   │ Uses:            │  │ Uses:            │  │ Uses:            │      │  │
-│   │   │ - pdf2image      │  │ - google-genai   │  │ - thefuzz        │      │  │
-│   │   │ - Pillow         │  │ - tenacity       │  │ - rapidfuzz      │      │  │
-│   │   └──────────────────┘  └──────────────────┘  └──────────────────┘      │  │
 │   │                                                                          │  │
-│   │   ┌──────────────────────────────────────────────────────────────┐      │  │
-│   │   │               JSONStorageRepository                          │      │  │
-│   │   │                    storage.py                                │      │  │
-│   │   │                                                              │      │  │
-│   │   │   Implements: StorageRepository                              │      │  │
-│   │   │                                                              │      │  │
-│   │   │   Methods:                                                   │      │  │
-│   │   │   ├── save_catalog()        - Save to JSON                  │      │  │
-│   │   │   ├── load_catalog()        - Load from JSON                │      │  │
-│   │   │   ├── save_checkpoint()     - Save progress                 │      │  │
-│   │   │   ├── load_checkpoint()     - Resume progress               │      │  │
-│   │   │   ├── delete_checkpoint()   - Cleanup                       │      │  │
-│   │   │   └── list_catalogs()       - List PDFs                     │      │  │
-│   │   └──────────────────────────────────────────────────────────────┘      │  │
+│   │   ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐       │  │
+│   │   │PDF2ImageProcessor│  │   GeminiClient   │  │FuzzyCategoryNorm.│       │  │
+│   │   │ pdf_processor.py │  │   llm_client.py  │  │  normalizer.py   │       │  │
+│   │   │                  │  │                  │  │                  │       │  │
+│   │   │ Implements:      │  │ Implements:      │  │ Implements:      │       │  │
+│   │   │ PDFProcessor     │  │ LLMClient        │  │ CategoryNormalizer       │  │
+│   │   │                  │  │                  │  │                  │       │  │
+│   │   │ Uses:            │  │ Uses:            │  │ Uses:            │       │  │
+│   │   │ - pdf2image      │  │ - google-genai   │  │ - thefuzz        │       │  │
+│   │   │ - Pillow         │  │ - tenacity       │  │ - rapidfuzz      │       │  │
+│   │   └──────────────────┘  └──────────────────┘  └──────────────────┘       │  │
+│   │                                                                          │  │
+│   │   ┌──────────────────────────────────────────────────────────────┐       │  │
+│   │   │               JSONStorageRepository                          │       │  │
+│   │   │                    storage.py                                │       │  │
+│   │   │                                                              │       │  │
+│   │   │   Implements: StorageRepository                              │       │  │
+│   │   │                                                              │       │  │
+│   │   │   Methods:                                                   │       │  │
+│   │   │   ├── save_catalog()        - Save to JSON                   │       │  │
+│   │   │   ├── load_catalog()        - Load from JSON                 │       │  │
+│   │   │   ├── save_checkpoint()     - Save progress                  │       │  │
+│   │   │   ├── load_checkpoint()     - Resume progress                │       │  │
+│   │   │   ├── delete_checkpoint()   - Cleanup                        │       │  │
+│   │   │   └── list_catalogs()       - List PDFs                      │       │  │
+│   │   └──────────────────────────────────────────────────────────────┘       │  │
 │   └──────────────────────────────────────────────────────────────────────────┘  │
-│                                                                                  │
+│                                                                                 │
 │   ┌──────────────────────────────────────────────────────────────────────────┐  │
 │   │                        EXTERNAL DEPENDENCIES                             │  │
-│   │                                                                           │  │
-│   │     ┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐               │  │
-│   │     │ Gemini  │   │ Poppler │   │  JSON   │   │  File   │               │  │
-│   │     │   API   │   │  (PDF)  │   │  Files  │   │ System  │               │  │
-│   │     └─────────┘   └─────────┘   └─────────┘   └─────────┘               │  │
+│   │                                                                          │  │
+│   │     ┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐                │  │
+│   │     │ Gemini  │   │ Poppler │   │  JSON   │   │  File   │                │  │
+│   │     │   API   │   │  (PDF)  │   │  Files  │   │ System  │                │  │
+│   │     └─────────┘   └─────────┘   └─────────┘   └─────────┘                │  │
 │   └──────────────────────────────────────────────────────────────────────────┘  │
-│                                                                                  │
+│                                                                                 │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -415,51 +415,51 @@ The extracted data is normalized, validated, and exported to structured JSON for
                                              │
                                              ▼
 ┌────────────────────────────────────────────────────────────────────────────────┐
-│                                                                                 │
-│  ┌─────────────┐      ┌─────────────┐      ┌─────────────┐      ┌───────────┐ │
-│  │             │      │             │      │             │      │           │ │
-│  │  PDF File   │─────►│ PDF2Image   │─────►│   Gemini    │─────►│ Normalizer│ │
-│  │  (Input)    │      │  Processor  │      │   Client    │      │           │ │
-│  │             │      │             │      │             │      │           │ │
-│  └─────────────┘      └─────────────┘      └─────────────┘      └─────┬─────┘ │
-│        │                    │                    │                    │       │
-│        │                    │                    │                    │       │
-│        │              ┌─────┴─────┐        ┌─────┴─────┐        ┌─────┴─────┐ │
-│        │              │  PIL      │        │   JSON    │        │  Fuzzy    │ │
-│        │              │  Images   │        │  Response │        │  Matched  │ │
-│        │              └───────────┘        └───────────┘        └───────────┘ │
-│        │                                                              │       │
-│        │                                                              ▼       │
-│        │                                                      ┌─────────────┐ │
-│        │                                                      │             │ │
-│        │                                                      │  Validator  │ │
-│        │                                                      │             │ │
-│        │                                                      └─────┬───────┘ │
-│        │                                                            │         │
-│        │                                                      ┌─────┴─────┐   │
-│        │                                                      │ Validated │   │
-│        │                                                      │ Products  │   │
-│        │                                                      │ + Alerts  │   │
-│        │                                                      └─────┬─────┘   │
-│        │                                                            │         │
-│        │              ┌───────────────────────────────────┐         │         │
-│        │              │         Checkpoint                │◄────────┤         │
-│        │              │    (every 10 pages)               │         │         │
-│        │              └───────────────────────────────────┘         │         │
-│        │                                                            │         │
-│        │                                                            ▼         │
-│        │                                                    ┌─────────────┐   │
-│        └───────────────────────────────────────────────────►│   Storage   │   │
-│                         source_file reference               │ Repository  │   │
-│                                                             └──────┬──────┘   │
-│                                                                    │          │
-└────────────────────────────────────────────────────────────────────┼──────────┘
+│                                                                                │
+│  ┌─────────────┐      ┌─────────────┐      ┌─────────────┐      ┌───────────┐  │
+│  │             │      │             │      │             │      │           │  │
+│  │  PDF File   │─────►│ PDF2Image   │─────►│   Gemini    │─────►│ Normalizer│  │
+│  │  (Input)    │      │  Processor  │      │   Client    │      │           │  │
+│  │             │      │             │      │             │      │           │  │
+│  └─────────────┘      └─────────────┘      └─────────────┘      └─────┬─────┘  │
+│        │                    │                    │                    │        │
+│        │                    │                    │                    │        │
+│        │              ┌─────┴─────┐        ┌─────┴─────┐        ┌─────┴─────┐  │
+│        │              │  PIL      │        │   JSON    │        │  Fuzzy    │  │
+│        │              │  Images   │        │  Response │        │  Matched  │  │
+│        │              └───────────┘        └───────────┘        └───────────┘  │
+│        │                                                              │        │
+│        │                                                              ▼        │
+│        │                                                      ┌─────────────┐  │
+│        │                                                      │             │  │
+│        │                                                      │  Validator  │  │
+│        │                                                      │             │  │
+│        │                                                      └─────┬───────┘  │
+│        │                                                            │          │
+│        │                                                      ┌─────┴─────┐    │
+│        │                                                      │ Validated │    │
+│        │                                                      │ Products  │    │
+│        │                                                      │ + Alerts  │    │
+│        │                                                      └─────┬─────┘    │
+│        │                                                            │          │
+│        │              ┌───────────────────────────────────┐         │          │
+│        │              │         Checkpoint                │◄────────┤          │
+│        │              │    (every 10 pages)               │         │          │
+│        │              └───────────────────────────────────┘         │          │
+│        │                                                            │          │
+│        │                                                            ▼          │
+│        │                                                    ┌─────────────┐    │
+│        └───────────────────────────────────────────────────►│   Storage   │    │
+│                         source_file reference               │ Repository  │    │
+│                                                             └──────┬──────┘    │
+│                                                                    │           │
+└────────────────────────────────────────────────────────────────────┼─────────-─┘
                                                                      │
                                                                      ▼
-                                              ┌──────────────────────────────────┐
-                                              │         Output JSON              │
-                                              │  data/output/catalog_YYYYMMDD.json│
-                                              └──────────────────────────────────┘
+                                              ┌────────────────────────────────────┐
+                                              │         Output JSON                │
+                                              │  data/output/catalog_YYYYMMDD.json │
+                                              └────────────────────────────────────┘
 ```
 
 ## Features
