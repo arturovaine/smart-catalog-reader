@@ -144,6 +144,113 @@ The extracted data is normalized, validated, and exported to structured JSON for
 </tr>
 </table>
 
+### Full Output Structure
+
+<details>
+<summary>Click to expand complete JSON output example</summary>
+
+```json
+{
+  "metadata": {
+    "name": "boticario-c03",
+    "brand": "O Boticário",
+    "cycle": null,
+    "validity_start": null,
+    "validity_end": null,
+    "total_pages": 197,
+    "source_file": "data/catalogs/boticario-c03.pdf",
+    "pages_processed": 197,
+    "pages_with_errors": [],
+    "exported_at": "2026-03-05T21:42:52.364339"
+  },
+  "global_promotional_rules": [],
+  "products": [
+    {
+      "code": "85675",
+      "name": "Creme Relaxante Hidratante Corporal Cuide-se Bem Cereja de Fases",
+      "product_line": "Cuide-se Bem",
+      "category": "Hidratação",
+      "normalized_category": "Corpo e Banho",
+      "volume_weight": "200 g",
+      "quantity": null,
+      "regular_price": 69.9,
+      "promotional_price": 55.9,
+      "savings": 14.0,
+      "discount_percentage": 20.03,
+      "promotion_active": true,
+      "promotional_rule": {
+        "type": "simple_discount",
+        "description": "ECONOMIZE R$ 14,00",
+        "conditions": {},
+        "discount_tiers": {},
+        "combo_codes": [],
+        "related_pages": []
+      },
+      "features": [
+        "Vegano",
+        "Sensação relaxante",
+        "Ajuda a aliviar o cansaço"
+      ],
+      "page": 2,
+      "quadrant": "bottom-left",
+      "alerts": []
+    },
+    {
+      "code": "85679",
+      "name": "Sabonete em Barra Cuide-se Bem Cereja de Fases",
+      "product_line": "Cuide-se Bem",
+      "category": "Limpeza",
+      "normalized_category": "Corpo e Banho",
+      "volume_weight": "4 unidades de 80 g cada",
+      "quantity": null,
+      "regular_price": 36.9,
+      "promotional_price": 28.9,
+      "savings": 8.0,
+      "discount_percentage": 21.68,
+      "promotion_active": true,
+      "promotional_rule": {
+        "type": "simple_discount",
+        "description": "ECONOMIZE R$ 8,00",
+        "conditions": {},
+        "discount_tiers": {},
+        "combo_codes": [],
+        "related_pages": []
+      },
+      "features": [
+        "Vegano",
+        "Limpa sem ressecar"
+      ],
+      "page": 2,
+      "quadrant": "bottom-left",
+      "alerts": []
+    }
+  ],
+  "statistics": {
+    "total_products": 1638,
+    "products_with_promotion": 539,
+    "categories": [
+      "Outros",
+      "Unhas",
+      "Maquiagem",
+      "Perfumaria",
+      "Cabelos",
+      "Corpo e Banho"
+    ],
+    "product_lines": [
+      "Beijinho",
+      "Intense",
+      "Egeo",
+      "Escudo de Força e Brilho",
+      "BOTI.SUN kids",
+      "Skin.q",
+      "Boti.Sun"
+    ]
+  }
+}
+```
+
+</details>
+
 ## Extraction Pipeline (Detailed Flow)
 
 ```
