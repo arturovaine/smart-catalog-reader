@@ -6,6 +6,49 @@ An intelligent PDF catalog extraction system that uses **Google Gemini Vision AI
   <img src="docs/images/project-cover.png" alt="Smart Catalog Reader - AI-powered product extraction" width="50%">
 </p>
 
+## Technical Flow
+
+```
+       SMART CATALOG READER | TECHNICAL FLOW
+       ====================================
+
+       [ INPUT ]            [ AI ENGINE ]             [ OUTPUT ]
+      +-----------+        +--------------------+     +-------------+
+      |  PDF File |───────▶| GEMINI VISION AI   |────▶|  JSON DATA  |
+      +-----------+        +---------┬----------+     +-------------+
+                                     │
+                                     ▼
+                      ┌───────────────────────────────┐
+                      │      EXTRACTION PIPELINE      │
+                      └──────────────┬────────────────┘
+                                     │
+      1. IMAGE PREP   ▶ PDF to high-res images (200 DPI)
+                                     │
+      2. BATCHING     ▶ Convert 5 pages/batch, parallel API calls
+                                     │
+      3. AI VISION    ▶ Extract: Code, Name, Price, Promos
+                                     │
+      4. REFINEMENT   ▶ Fuzzy Match: Normalize Categories
+                                     │
+      5. VALIDATION   ▶ Auto-Correction & Data Checks
+                                     │
+      6. CHECKPOINT   ▶ Save progress every 10 pages
+                                     │
+                                     ▼
+                      +-------------------------------+
+                      |      DATA SAMPLE (JSON)       |
+                      |-------------------------------|
+                      | {                             |
+                      |   "codigo": "85675",          |
+                      |   "nome": "Creme Relaxante",  |
+                      |   "preco_regular": 69.90,     |
+                      |   "preco_promocional": 55.90, |
+                      |   "categoria_normalizada":    |
+                      |       "Corpo e Banho"         |
+                      | }                             |
+                      +-------------------------------+
+```
+
 ## Overview
 
 This tool processes PDF catalogs from brands like **O Boticário** and **Natura**, converting each page into images and using AI vision to extract:
