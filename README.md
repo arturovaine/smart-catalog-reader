@@ -13,9 +13,9 @@ An intelligent PDF catalog extraction system that uses **Google Gemini Vision AI
        ====================================
 
        [ INPUT ]            [ AI ENGINE ]             [ OUTPUT ]
-      +-----------+        +--------------------+     +-------------+
-      |  PDF File |───────▶| GEMINI VISION AI   |────▶|  JSON DATA  |
-      +-----------+        +---------┬----------+     +-------------+
+      ┌────────────┐        ┌────────────────────┐     ┌─────────────┐ 
+      |  PDF File  |───────▶| GEMINI VISION AI   |────▶|  JSON DATA  |
+      └────────────┘        └────────┬───────────┘     └─────────────┘
                                      │
                                      ▼
                       ┌───────────────────────────────┐
@@ -35,7 +35,7 @@ An intelligent PDF catalog extraction system that uses **Google Gemini Vision AI
       6. CHECKPOINT   ▶ Save progress every 10 pages
                                      │
                                      ▼
-                      +-------------------------------+
+                      ┌───────────────────────────────┐
                       |      DATA SAMPLE (JSON)       |
                       |-------------------------------|
                       | {                             |
@@ -46,7 +46,7 @@ An intelligent PDF catalog extraction system that uses **Google Gemini Vision AI
                       |   "categoria_normalizada":    |
                       |       "Corpo e Banho"         |
                       | }                             |
-                      +-------------------------------+
+                      └───────────────────────────────┘
 ```
 
 ## Overview
