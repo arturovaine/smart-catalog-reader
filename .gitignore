@@ -1,5 +1,6 @@
 # Data files - catalogs and outputs
 data/catalogs/*.pdf
+data/catalogs/*.zip
 data/output/
 data/output/**/*.json
 *.checkpoint.json
