@@ -1,0 +1,16 @@
+{
+  "id": "arturovainecwb/boticario-natura-catalog-analysis",
+  "title": "Boticário & Natura - Catalog Products Analysis",
+  "code_file": "boticario_natura_analysis.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": false,
+  "enable_internet": true,
+  "dataset_sources": [
+    "arturovainecwb/o-boticrio-products-catalogs-20252026",
+    "arturovainecwb/natura-and-co-products-catalogs-20252026"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}
